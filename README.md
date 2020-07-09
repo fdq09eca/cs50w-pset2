@@ -66,16 +66,33 @@ requirements:
   will eventually be associated with every message the user sends. If
   a user closes the page and returns to your app later, the display
   name should still be remembered.
+
+  - use a form(_Jinja_) or a prompt(_JS_, by client browser) to obtain the client name, and store it in the client's localstorage
+  - > it is totally JS, you need it to be in the `localStorage` not `sessionStorage` for enabling user to not input their name everytime.
+
 - **Channel Creation**: Any user should be able to create a new
   channel, so long as its name doesn’t conflict with the name of an
   existing channel.
+
+  - channel should be mark with unique id/name
+  - Dynamic url (_flask_)
+
 - **Channel List**: Users should be able to see a list of all current
   channels, and selecting one should allow the user to view the
   channel. We leave it to you to decide how to display such a list.
-- **Messages View**: Once a channel is selected, the user should see
-  any messages that have already been sent in that channel, up to a
-  maximum of 100 messages. Your app should only store the 100 most
-  recent messages per channel in server-side memory.
+
+  - an `accordion` from _bs4_
+  - allow user to create a channel, using _flask_ form.
+  - make sure it is using `socketio` and `emit`
+    - people should see a new channel being created in real-time
+
+- **Messages View**: Once a channel is selected, the user should see any messages that have already been sent in that channel, _up to a maximum of 100 messages_. Your app should only store the 100 most _recent messages per channel in server-side memory_.
+
+  - use a `counter` in view function
+  - conversation should be marked with `counter`
+  - use a `session` to store the recent 100 messages of **each channel**, replace if `key (counter)` is repeated
+  - or use `list` and `pop`?
+
 - **Sending Messages**: Once in a channel, users should be able to
   send text messages to others the channel. When a user sends a
   message, their display name and the timestamp of the message should
@@ -83,15 +100,31 @@ requirements:
   see the new message (with display name and timestamp) appear on
   their channel page. Sending and receiving messages should NOT
   require reloading the page.
+
+  - show message input field only if the user is in a channel (_flask, jinja condition_)
+    - no boardcast from the lobby
+  - use `socketio` and `emit` from _flask_ as and API to boardcast users' message in the channel
+    - messages are formated with timestamp `datetime` module
+  - use JS to display to each client
+
 - **Remembering the Channel**: If a user is on a channel page, closes
   the web browser window, and goes back to your web application, your
   application should remember what channel the user was on previously
   and take the user back to that channel.
+  - client side stores **current channel name/id**
+  - use _JS_ to check if client name and channel name/id exist in the index page
+    - if yes, redirect to the _channel_
 - **Personal Touch**: Add at least one additional feature to your chat
   application of your choosing! Feel free to be creative, but if
   you’re looking for ideas, possibilities include: supporting deleting
   one’s own messages, supporting use attachments (file uploads) as
   messages, or supporting private messaging between two users.
+
+  - private messaging
+    - _user-id_ to _user-id_, conditional `socketio`
+      - show to the respective user when their id is suggested by another user's input
+  - attachment, uplaoding (_flask_, check the documentation)
+
 - In `README.md`, include a short writeup describing your project,
   what’s contained in each file, and (optionally) any other additional
   information the staff should know about your project. Also, include
