@@ -1,28 +1,26 @@
 {% extends "layout.html" %} {% block title %}index{% endblock %} {% block
 content %}
-<!-- {% if username %}
-<h1>Hello {{username}}!</h1>
-{% else %}
-<form method="post">
-  <input
-    id="username"
-    type="text"
-    placeholder="What is your name?"
-    name="username"
-  />
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-{% endif %} -->
-<form method="" id="username" onsubmit="get_username()">
+<div>
+  <div>
     <input
-      id="username"
       type="text"
-      placeholder="What is your name?"
       name="username"
+      id="username-input"
+      placeholder="what is your name"
     />
-    <button id="username-submit" type="submit" class="btn btn-primary">Submit</button>
-</form>
-<h1></h1>
+    <button id="btn-sumbit-username">Submit</button>
+  </div>
+  <div>
+    <h1 id="username"></h1>
+  </div>
+</div>
+<div>
+  <ul id="sys-msg"></ul>
+</div>
 {% endblock %} {% block js %}
-<script src="{{ url_for('static', filename = 'js/alert.js') }}"></script>
+<script
+  type="text/javascript"
+  src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"
+></script>
+<script src="{{ url_for('static', filename = 'js/username.js') }}"></script>
 {% endblock %}
