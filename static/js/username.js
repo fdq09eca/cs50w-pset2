@@ -1,6 +1,6 @@
-function gotoBottom(id){
-    var element = document.getElementById(id);
-    element.scrollTop = element.scrollHeight - element.clientHeight;
+function gotoBottom(id) {
+  var element = document.getElementById(id);
+  element.scrollTop = element.scrollHeight - element.clientHeight;
 }
 
 function get_username() {
@@ -28,7 +28,7 @@ function printSysMsg(msg, cls = "s-msg") {
   span.innerHTML = msg;
   li.appendChild(span);
   document.querySelector("#sys-msg").append(li);
-  gotoBottom('sys-msg')
+  gotoBottom("sys-msg");
 }
 
 function main() {
@@ -100,13 +100,16 @@ function main() {
   window.onbeforeunload = () => {
     // close all room user created
     document.querySelectorAll("#room-list li a").forEach((room) => {
-      let rm_owner_id = room.dataset.owner_id
-      let rm_id = room.parentElement.id
+      let rm_owner_id = room.dataset.owner_id;
+      let rm_id = room.parentElement.id;
       // console.log(rm_id)
-      if (rm_owner_id == get_userid()){
-        socket.emit('room-close', {'user-id': get_userid(), 'closed-room-id': rm_id})
+      if (rm_owner_id == get_userid()) {
+        socket.emit("room-close", {
+          "user-id": get_userid(),
+          "closed-room-id": rm_id,
+        });
       }
-    })
+    });
     socket.emit("user-disconnect", { "user-id": get_userid() });
   };
 
@@ -115,47 +118,57 @@ function main() {
   });
 
   function get_roomlist(roomname, owner_id) {
-    console.log('get_roomlist() fire')
-    
+    console.log("get_roomlist() fire");
+
     const room = document.createElement("li");
-    room.id = roomname
-    
-    
+    room.id = roomname;
+
     const rm_name = document.createElement("a");
     rm_name.setAttribute("data-owner_id", owner_id);
     rm_name.setAttribute("href", "#");
     // rm_name.id = 'room-link'
     rm_name.innerHTML = roomname;
-    
-    rm_name.onclick =  () => {
-      
-      console.log(`${rm_name} clicked!!`)
-      socket.emit("join", { "user-id": get_userid(), roomname: roomname, 'no-refresh-rmli': true });
+
+    rm_name.onclick = () => {
+      if (
+        document.querySelector(`#${localStorage.getItem("room")} #leave-btn`)
+      ) {
+        document
+          .querySelector(`#${localStorage.getItem("room")} #leave-btn`)
+          .click();
+        document.querySelector("#sys-msg").innerHTML = "";
+        // console.log(`#${localStorage.getItem("room")} #leave-btn`);
+      }
+
+      socket.emit("join", {
+        "user-id": get_userid(),
+        roomname: roomname,
+        "no-refresh-rmli": true,
+      });
       // socket.emit("join", { "user-id": get_userid(), roomname: roomname});
-      
+
       document.querySelector("#sys-msg").innerHTML = "";
-      
+
       rm_name.style.pointerEvents = "none";
       rm_name.style.color = "grey";
-      
+
       const leave_btn = document.createElement("button");
       leave_btn.id = "leave-btn";
       leave_btn.setAttribute("data-roomname", roomname);
       leave_btn.innerHTML = "Leave";
-      
+
       leave_btn.onclick = () => {
-        socket.emit("leave", {"user-id": get_userid(),roomname: roomname,});
-        
+        socket.emit("leave", { "user-id": get_userid(), roomname: roomname });
+
         rm_name.style.pointerEvents = "initial";
         rm_name.style.color = "#007bff";
-        leave_btn.remove()
-      }
+        leave_btn.remove();
+      };
       room.append(leave_btn);
-    }
+    };
     room.append(rm_name);
-    
+
     if (owner_id == get_userid()) {
-      
       const del_btn = document.createElement("button");
       del_btn.id = "del-btn";
       del_btn.setAttribute("data-owner_id", owner_id);
@@ -166,65 +179,58 @@ function main() {
           "user-id": get_userid(),
           "closed-room-id": roomname,
         });
-        this.remove()
-      }
-      
+        this.remove();
+      };
+
       // room.innerHTML += " ";
       room.append(del_btn);
     }
 
     document.querySelector("#room-list").append(room);
   }
-  
-  socket.on('get_roomlist', data => {
-    
-    p = document.createElement('p')
-    p.id = 'room-list-heading'
-    span = document.createElement('span')
-    span.innerHTML = 'Rooms Available'
-    p.append(span)
+
+  socket.on("get_roomlist", (data) => {
+    p = document.createElement("p");
+    p.id = "room-list-heading";
+    span = document.createElement("span");
+    span.innerHTML = "Rooms Available";
+    p.append(span);
 
     document.querySelector("#room-list").innerHTML = "";
-    document.querySelector("#room-list").append(p)
-    
+    document.querySelector("#room-list").append(p);
 
     for (let index = 0, l = data.room_list.length; index < l; index++) {
       const roomname = data.room_list[index][0];
       const owner_id = data.room_list[index][1];
-      get_roomlist(roomname, owner_id)
+      get_roomlist(roomname, owner_id);
     }
-  })
+  });
 
   socket.on("room-created-bdc", (data) => {
     printSysMsg(data.msg);
-    console.log('room-created-bdc fire')
+    console.log("room-created-bdc fire");
     // socket.emit('join', {'user-id': get_userid(), 'roomname': data.roomname})
-    get_roomlist(data.roomname, data["user-id"])
-
-
+    get_roomlist(data.roomname, data["user-id"]);
   });
-
 
   document.querySelector("#btn-send-msg").addEventListener("click", () => {
     const user_id = get_userid();
     const msg = document.querySelector("#msg-input").value;
     // console.log("msg send to backend!");
-    if (msg != ''){
+    if (msg != "") {
       socket.send({ "user-id": user_id, msg: msg });
-      document.querySelector('#msg-input').value= ""
-    }
-    else{
-      alert('no empty message.')
+      document.querySelector("#msg-input").value = "";
+    } else {
+      alert("no empty message.");
     }
   });
 
-  document.querySelector('#msg-input').addEventListener('keydown', e =>{
-    if(e.keyCode === 13 ){
-      document.querySelector("#btn-send-msg").click()     
+  document.querySelector("#msg-input").addEventListener("keydown", (e) => {
+    if (e.keyCode === 13) {
+      document.querySelector("#btn-send-msg").click();
     }
-  })
+  });
 
- 
   socket.on("message", (data) => {
     printSysMsg(data.msg, "d-msg");
     document.querySelectorAll("#sys-msg .d-msg span span").forEach((msg) => {
@@ -234,42 +240,43 @@ function main() {
     });
   });
 
-
-  function print_room(rm){
-    const room = document.createElement('span')
-    room.innerHTML = rm
-    document.querySelector('#greet #room').innerHTML = 'You are now in '
-    document.querySelector('#greet #room').append(room)
+  function print_room(rm) {
+    const room = document.createElement("span");
+    room.innerHTML = rm;
+    document.querySelector("#greet #room").innerHTML = "You are now in ";
+    document.querySelector("#greet #room").append(room);
   }
 
-  function get_roomlog(data){
-    
-    print_room(data.roomname)
-    
+  function get_roomlog(data) {
+    print_room(data.roomname);
+
     const request = new XMLHttpRequest();
     request.open("POST", "/room_log");
     const rmn = new FormData();
     rmn.append("room", data.roomname);
     request.send(rmn);
-  
+
     request.onload = () => {
       const rmlog = JSON.parse(request.responseText);
-        // console.log();
+      // console.log();
       if (rmlog.roomlog) {
         for (let index = 0, l = rmlog.roomlog.length; index < l; index++) {
           const element = rmlog.roomlog[index];
           printSysMsg(element, "d-msg");
         }
       }
-    }
+    };
   }
 
-  socket.on('get_roomlog', data =>{
-    get_roomlog(data)
-  })
+  socket.on("get_roomlog", (data) => {
+    document.querySelector("#sys-msg").innerHTML = "";
+    get_roomlog(data);
+  });
 
-  socket.on("join_room", data => {
+  socket.on("join_room", (data) => {
     printSysMsg(data.msg);
+    localStorage.setItem("room", data.room);
+    // console.log(localStorage.getItem("room", data.room));
   });
 
   socket.on("leave_room", (data) => {
@@ -286,7 +293,7 @@ function main() {
 
   socket.on("closed-room-bdc", (data) => {
     printSysMsg(data.msg);
-    console.log(data["closed-room-id"])
+    console.log(data["closed-room-id"]);
     document.getElementById(data["closed-room-id"]).remove();
   });
 
