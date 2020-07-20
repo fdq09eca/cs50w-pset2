@@ -1,2 +1,6 @@
 Flask
 Flask-SocketIO
+
+# Heroku
+psycopg2==2.7.6.1
+gunicorn==19.9.0
