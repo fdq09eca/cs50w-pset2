@@ -176,4 +176,4 @@ def room_close(data):
         rooms.pop(room, None)
 
 if __name__ == "__main__":
-    app.run()
+    socketio.run(app)
