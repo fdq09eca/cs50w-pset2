@@ -174,6 +174,3 @@ def room_close(data):
                              'closed-room-id': room}, broadcast=True)
     if room != 'lobby':
         rooms.pop(room, None)
-
-if __name__ == "__main__":
-    app.run()
