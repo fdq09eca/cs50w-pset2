@@ -38,7 +38,7 @@ mccabe==0.6.1
 monotonic==1.5
 numpy==1.17.4
 pexpect==4.8.0
-pipenv==2018.11.26
+pipenv==2022.1.8
 psycopg2-binary==2.8.5
 ptyprocess==0.6.0
 pycodestyle==2.5.0
