@@ -36,7 +36,7 @@ MarkupSafe==1.1.1
 matplotlib==3.1.2
 mccabe==0.6.1
 monotonic==1.5
-numpy==1.17.4
+numpy==1.22.0
 pexpect==4.8.0
 pipenv==2018.11.26
 psycopg2-binary==2.8.5
